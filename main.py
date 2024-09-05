@@ -56,10 +56,31 @@ def add_client(conn, first_name, last_name, email, phones=None):
 
         conn.commit()
 
+
+def add_phone(conn, client_id, phone):
+    """Добавление номера телефона"""
+    with conn.cursor() as cur:
+        cur.execute("""
+        SELECT id from clients_info;
+        """)
+        clients = cur.fetchall()
+
+        if (client_id,) in clients:
+            cur.execute("""
+            INSERT INTO phone_numbers(phone_number, client_id)
+            VALUES(%s, %s);
+            """, (phone, client_id))
+        else:
+            print('Такого клиента не существует')
+
+        conn.commit()
+
+
 with psycopg2.connect(database="clients_db", user="postgres", password="postgres") as conn:
     create_db(conn)
 
     add_client(conn, 'Иван', 'Иванов', 'ivan@mail.ru')
     add_client(conn, 'Петр', 'Петров', 'petr@mail.ru', phones=('79999', '98888', '39999'))
 
+    add_phone(conn, 1, '764646',)
 conn.close()
