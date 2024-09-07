@@ -142,6 +142,28 @@ def delete_client(conn, client_id):
         conn.commit()
 
 
+def find_client(conn, first_name=None, last_name=None, email=None, phone=None):
+    """Функция находит клиентов по имени, фамилии, email или телефону."""
+    with conn.cursor() as cur:
+        cur.execute("""
+        SELECT ci.first_name, ci.last_name, ci.email, pn.phone_number FROM clients_info ci
+        JOIN phone_numbers pn ON ci.id = pn.client_id
+        WHERE (first_name = %(first_name)s OR %(first_name)s IS NULL)
+        AND (last_name = %(last_name)s OR %(last_name)s IS NULL)
+        AND (email = %(email)s OR %(email)s IS NULL)
+        AND (phone_number = %(phone)s OR %(phone)s IS NULL);
+        """, ({'first_name': first_name, 'last_name': last_name, 'email': email, 'phone': phone}))
+
+        info = cur.fetchall()
+
+        if info:
+            print(info)
+        else:
+            print('Клиент с заданными параметрами не найден.')
+
+    conn.commit()
+
+
 with psycopg2.connect(database="clients_db", user="postgres", password="postgres") as conn:
     create_db(conn)
 
@@ -156,4 +178,6 @@ with psycopg2.connect(database="clients_db", user="postgres", password="postgres
     delete_phone(conn, 2, '79999')
 
     delete_client(conn, client_id=2)
+
+    find_client(conn, first_name='Ваня')
 conn.close()
