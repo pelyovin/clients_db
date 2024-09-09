@@ -39,7 +39,7 @@ def return_clients(conn):
 
 
 def add_client(conn, first_name, last_name, email, phones=None):
-    """Добавление клиента в БД"""
+    """Функция добавляет клиента в БД"""
     with conn.cursor() as cur:
         cur.execute("""
         INSERT INTO clients_info(first_name, last_name, email)
@@ -65,7 +65,7 @@ def add_client(conn, first_name, last_name, email, phones=None):
 
 
 def add_phone(conn, client_id, phone):
-    """Добавление номера телефона"""
+    """Функция добавляет номера телефона клиента по его id"""
     with conn.cursor() as cur:
         if (client_id,) in return_clients(conn):
             cur.execute("""
@@ -80,7 +80,7 @@ def add_phone(conn, client_id, phone):
 
 
 def change_client(conn, client_id, first_name=None, last_name=None, email=None, old_phone=None, new_phone=None):
-    """Изменение данных клиента."""
+    """Функция изменяет имя, фамилию, почту, телефон клиента."""
     new_info = {"first_name": first_name, 'last_name': last_name, 'email': email}
 
     with conn.cursor() as cur:
@@ -98,7 +98,7 @@ def change_client(conn, client_id, first_name=None, last_name=None, email=None, 
 
 
 def delete_phone(conn, client_id, phone):
-    """Удаление номера телефона."""
+    """Функция удаляет указанный номера телефона."""
     with conn.cursor() as cur:
         cur.execute("SELECT phone_number FROM phone_numbers;")
         phones = cur.fetchall()
@@ -117,7 +117,7 @@ def delete_phone(conn, client_id, phone):
 
 
 def delete_client(conn, client_id):
-    """Удаление клиента"""
+    """Функция удаляет все данные клиента"""
     with conn.cursor() as cur:
         cur.execute("""
         DELETE FROM phone_numbers
